@@ -3,6 +3,7 @@ class Calculation {
         this.a = a;
         this.b = b;
         this.op = op;
+        this.stragtegy = null;
     }
 
     static Create(a, b, op){
@@ -25,6 +26,14 @@ class Calculation {
 
     obtainStructor(){
         return this.a +' '+ this.b;
+    }
+
+    set strategy(stragtegy){
+        this.stragtegy = stragtegy;
+    }
+
+    doOperation(){
+        return this.stragtegy.doAction();
     }
 }
 module.exports = Calculation;

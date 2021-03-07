@@ -136,59 +136,47 @@ class Calculation {
 
 # C. Design Patterns
 
-**Builder**
+**Singleton (Creational)**
 
-Definition: Builder is a creational design pattern that lets you construct complex objects step by step. The pattern allows you to produce different types and representations of an object using the same construction code.
+Definition:
+
+The Singleton design pattern lets you ensure that a class has only one instance, while providing a global access point to this instance.
+All implementations of the Singleton have these two steps in common:
+1. Make the default constructor private, to prevent other objects from using the new operator with the Singleton class.
+2. Create a static creation method that acts as a constructor. This method calls the private constructor to create an object and saves it in a static field.
 
 For Example:
-The CalculationBuilderPattern has the same construction code. However, when we instantiate an object, we can produce difference type
-and representation of the object such as Product, Squareroot
+
 ```
-class CalculationBuilderPattern {
-    constructor(a, b, perform) {
-        this.a = a;
-        this.b = b;
-        this.perform = perform;
+const Calculator = require('../Calculator');
+
+let calculation = (function () {
+    let instance;
+    function createInstance() {
+        let calculator = new Calculator("I am the instance");
+        return calculator;
     }
 
-    static Create(a, b, perform){
-        return new CalculationBuilderPattern(a, b, perform);
-    }
-
-    GetResults() {
-        return this.perform(this.a,this.b)
-    }
-
-    addOperationToName(fn){
-        return function(name){
-            const operation = name + ' is an operation';
-            return fn(operation);
+    return {
+        getInstance: function () {
+            if (!instance) {
+                instance = createInstance();
+            }
+            return instance;
         }
-    }
-
-    sayOperation(name){
-        return name;
-    }
-
-    obtainStructor(){
-        return this.a +' '+ this.b;
-    }
-
-    newProduct(a, b, perform){
-        this.mul = a * b;
-    }
-
-    newSquareRoot(a, b, perform){
-        this.squareRoot = Math.pow(a, 1/b);
-    }
-}
-module.exports = CalculationBuilderPattern;
+    };
+})();
+module.exports = calculation;
 ```
-***Decorator***
+***Decorator (Structural)***
 
-Definition: Decorator is a structural design pattern that lets you attach new behaviors to objects by placing these objects inside special wrapper objects that contain the behaviors.
+Definition: 
 
-For example: addOperationToName takes the function it wraps as a parameter (fn) (the function sayOperation). Then it will return
+Decorator is a structural design pattern that lets you attach new behaviors to objects by placing these objects inside special wrapper objects that contain the behaviors.
+
+For example: 
+
+addOperationToName takes the function it wraps as a parameter (fn) (the function sayOperation). Then it will return
 a function (fn) (sayOperation). It means we are extending the function (fn) by concatenating the String it receives as a parameter
 We can say that we are decorating the sayOperation function
 Calculation.js
@@ -214,26 +202,73 @@ test('Test say name for Product operation', () => {
 });
 ```
 
-***Template Method***
+***Strategy (Behavioral)***
 
-Definition: Template Method is a behavioral design pattern that defines the skeleton of 
-an algorithm in the superclass but lets subclasses override specific steps of the algorithm without changing its structure.
+Definition: 
 
-For example: The subclass CalculationTemplate inherit specific functions from superclass which is Calculation. However, it will
-have additional method that will be added to it without changing the structure of the superclass
+Strategy Design Pattern  is a type of behavioral design pattern that encapsulates a "family" of algorithms 
+and selects one from the pool for use during runtime. The algorithms are interchangeable, meaning that they are substitutable for each other.
+
+For example: 
+
+Calculation.js
 ```
-const Calculation = require('./Calculation');
-
-class CalculationTemplate extends Calculation{
-    constructor(a, b, c, op){
-        super(a);
-        super(b);
-        super(op);
-        this.c = c;
+class Calculation {
+    constructor(a, b, op) {
+        this.a = a;
+        this.b = b;
+        this.op = op;
+        this.stragtegy = null;
     }
-    calStructorParent(c){
-        return super.obtainStructor() + ' ,and' + this.c;
+
+    static Create(a, b, op){
+        return new Calculation(a, b, op);
+    }
+
+     GetResults() {
+        return this.op(this.a,this.b)
+    }
+    addOperationToName(fn){
+        return function(name){
+            const operation = name + ' is an operation';
+            return fn(operation);
+        }
+    }
+
+    sayOperation(name){
+        return name;
+    }
+
+    obtainStructor(){
+        return this.a +' '+ this.b;
+    }
+
+    set strategy(stragtegy){
+        this.stragtegy = stragtegy;
+    }
+
+    doOperation(){
+        return this.stragtegy.doAction();
     }
 }
-module.exports = CalculationTemplate;
+module.exports = Calculation;
+```
+
+CalculationStrategy.js
+```
+class CalculationStrategy{
+    doAction(){
+        return 'This is Calculation Strategy 1';
+    }
+}
+module.exports = CalculationStrategy;
+```
+CalculationStrategyB.js
+```
+class CalculationStrategyB{
+    doAction(){
+        return 'This is Calculation Strategy 2';
+    }
+}
+module.exports = CalculationStrategyB;
 ```
