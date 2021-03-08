@@ -193,6 +193,7 @@ For example:
 addOperationToName takes the function it wraps as a parameter (fn) (the function sayOperation). Then it will return
 a function (fn) (sayOperation). It means we are extending the function (fn) by concatenating the string it receives as a parameter. Then
 we can say that we are decorating the sayOperation function
+
 Calculation.js
 ```
 addOperationToName(fn){
